@@ -1,15 +1,25 @@
 import http from 'http';
-const server = http.createServer((req, res) => {
-    if(req.url=='/'){
-        res.write('Home Page')
-    }
-    else if(req.url=='/about'){
-        res.write('About Page')
-    }
-    else{
-        res.write('404 Page Not Found')
-    }
-    res.end();
-
+const server=http.createServer((req,res)=>{
+if(req.url==='/'){
+    res.writeHead(200,{"content-type":"text/csv"})
+    res.end("Home Page")
+}
+else if(req.url==="/data" && req.method=="POST"){
+    let body="";
+    req.on("data",(chunk)=>{
+      body+=chunk;
+    })
+    req.on("end",()=>{
+        res.writeHead(200,{"content-type": "application/json"})
+        const pdata=JSON.parse(body);
+      res.end(JSON.stringify(pdata));  
+    })
+    
+}
+else{
+    res.end('Error: URL Not Found')
+}
 })
-server.listen(5003,()=>{console.log('Server is listening on port 5003')})
+server.listen(5003,()=>{
+    console.log(`Server is running on port 5003`);
+})
